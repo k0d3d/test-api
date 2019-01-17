@@ -15,6 +15,7 @@ const  jwt = require("jsonwebtoken");
 
 // sessionless stub
 let countries = []
+let ourSecretShhhhh = "super-secret";
 
 // set version
 
@@ -37,6 +38,31 @@ function loadMiddleWare() {
     .get(function (req, res) {
       res.send('Server is running');
     });
+  
+  // as per the requirements of the test
+  // the method the middleware checks for 
+  // the token is not specified. 
+  // For simplicity, ill use a bearer token
+  // and a query param 'token'
+  // 
+  const authenticate = () =>  (req, res, next) => {
+    console.log('chai')
+    let token
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      token = req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      token = req.query.token;
+    }
+
+    // verify a token symmetric
+    jwt.verify(token, ourSecretShhhhh, function (err, decoded) {
+      if (err) return res.status(500).send(err)
+      if (decoded.username === 'admin' && decoded.password === 'admin') return next()
+      console.log(decoded) // lets see what creds we sent
+      res.status(401).send('unauthorized')
+    });
+
+  }
 
 
   app.post('/login', (req, res, next) => {
@@ -46,7 +72,7 @@ function loadMiddleWare() {
             { 
               "username": "admin", 
               "password": "admin"
-            }, 'super-secret');
+            }, ourSecretShhhhh);
           res.status(200).send(token)
     } else {
       res.status(401).send('Unauthorized')
@@ -54,16 +80,16 @@ function loadMiddleWare() {
     
   })
 
-  app.route('/countries')
-    .get((req, res, next) => {
+  app.route('/countries',)
+    .get(authenticate(), (req, res, next) => {
       res.json(countries)
     })
-    .put((req, res, next) => {
+    .put(authenticate(), (req, res, next) => {
       if (!req.body.country) return res.status(400).send('expected json with "country" property')
       countries.push(req.body.country);
       res.json(countries)
     })
-    .delete((req, res, next) => {
+    .delete(authenticate(), (req, res, next) => {
       if (!req.body.country) return res.status(400).send('expected json with "country" property')
       countries.indexOf(req.body.country)
       res.json(countries)
