@@ -36,15 +36,20 @@ function loadMiddleWare() {
       res.send('Server is running');
     });
 
+  app.post('/login', (req, res, next) => {
 
-  app.route('/ping')
-    .get(function (req, res) {
-      res.send('ready');
-    });
+  })
 
+  app.route('/countries')
+    .get((req, res, next) => {
 
-  // our routes
-  // routes(app);
+    })
+    .put((req, res, next) => {
+
+    })
+    .delete((req, res, next) => {
+      
+    })
 
   app.use(function (req, res) {
     if (req.xhr) {
