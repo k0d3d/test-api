@@ -10,6 +10,7 @@ const app = express();
   // routes = require('./controllers/routes'),
 const  methodOverride = require('method-override');
 const  bodyParser = require('body-parser');
+const  jwt = require("jsonwebtoken");
 // const
 
 // sessionless stub
@@ -37,10 +38,16 @@ function loadMiddleWare() {
       res.send('Server is running');
     });
 
+
   app.post('/login', (req, res, next) => {
     if (req.body.username === "admin" &&
         req.body.password === "admin") {
-          res.status(200).send('token')
+          let token = jwt.sign(
+            { 
+              "username": "admin", 
+              "password": "admin"
+            }, 'super-secret');
+          res.status(200).send(token)
     } else {
       res.status(401).send('Unauthorized')
     }
