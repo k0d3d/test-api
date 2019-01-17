@@ -10,9 +10,10 @@ const app = express();
   // routes = require('./controllers/routes'),
 const  methodOverride = require('method-override');
 const  bodyParser = require('body-parser');
+// const
 
-
-
+// sessionless stub
+let countries = []
 
 // set version
 
@@ -37,18 +38,28 @@ function loadMiddleWare() {
     });
 
   app.post('/login', (req, res, next) => {
-
+    if (req.body.username === "admin" &&
+        req.body.password === "admin") {
+          res.status(200).send('token')
+    } else {
+      res.status(401).send('Unauthorized')
+    }
+    
   })
 
   app.route('/countries')
     .get((req, res, next) => {
-
+      res.json(countries)
     })
     .put((req, res, next) => {
-
+      if (!req.body.country) return res.status(400).send('expected json with "country" property')
+      countries.push(req.body.country);
+      res.json(countries)
     })
     .delete((req, res, next) => {
-      
+      if (!req.body.country) return res.status(400).send('expected json with "country" property')
+      countries.indexOf(req.body.country)
+      res.json(countries)
     })
 
   app.use(function (req, res) {
