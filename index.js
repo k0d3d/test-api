@@ -7,7 +7,6 @@ Main application entry point
 // REQUIRE SECTION
 const express = require('express');
 const app = express();
-  // routes = require('./controllers/routes'),
 const  methodOverride = require('method-override');
 const  bodyParser = require('body-parser');
 const  jwt = require("jsonwebtoken");
@@ -46,7 +45,6 @@ function loadMiddleWare() {
   // and a query param 'token'
   // 
   const authenticate = () =>  (req, res, next) => {
-    console.log('chai')
     let token
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
       token = req.headers.authorization.split(' ')[1];
@@ -58,7 +56,6 @@ function loadMiddleWare() {
     jwt.verify(token, ourSecretShhhhh, function (err, decoded) {
       if (err) return res.status(500).send(err)
       if (decoded.username === 'admin' && decoded.password === 'admin') return next()
-      console.log(decoded) // lets see what creds we sent
       res.status(401).send('unauthorized')
     });
 
@@ -115,7 +112,7 @@ loadMiddleWare();
 
 // actual application start
 app.listen(port);
-console.log('Tag Chief Service started on port ' + port);
+console.log('Service started on port ' + port);
 
 // CATASTROPHIC ERROR
 app.use(function (err, req, res) {
